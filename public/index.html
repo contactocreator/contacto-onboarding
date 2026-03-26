@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Contacto — 온보딩</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet"/>
+<style>
+/* ── CONTACTO DESIGN TOKENS ── */
+:root {
+  --black:       #000000;
+  --white:       #FFFFFF;
+  --green:       #BAEF62;   /* accent — primary CTA */
+  --green-dark:  #17DB4E;   /* success dot */
+  --primary:     #2EA7E0;   /* blue — info only */
+  --error:       #FE3843;
+  --dim:         #333333;
+  --mid:         #6E6E6E;
+  --light:       #ADADAD;
+  --separator:   #1E1E1E;
+  --border-dim:  #2A2A2A;
+
+  --radius-pill: 9999px;
+  --radius-md:   10px;
+  --radius-sm:   6px;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+body {
+  background: #0a0a0a;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  font-family: 'Noto Sans KR', sans-serif;
+  padding-bottom: 48px;
+}
+
+/* ── PHONE FRAME ── */
+.phone {
+  width: 390px;
+  background: var(--black);
+  border-radius: 48px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 40px 100px rgba(0,0,0,0.95), inset 0 0 0 1px #1a1a1a;
+  margin-top: 28px;
+}
+
+/* ── STATUS BAR ── */
+.sbar {
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 28px;
+  background: var(--black);
+}
+.sbar-time { color: var(--white); font-size: 15px; font-weight: 600; letter-spacing: -0.3px; }
+.sbar-icons { display: flex; gap: 5px; align-items: center; }
+
+/* ── SCREENS ── */
+.screen { display: none; flex-direction: column; background: var(--black); }
+.screen.active { display: flex; }
+.screen-body { padding: 0 24px 40px; flex: 1; display: flex; flex-direction: column; }
+
+/* ── STEP INDICATOR ── */
+.step-bar {
+  padding: 14px 24px 0;
+}
+.step-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--light);
+  letter-spacing: 2px;
+  font-family: 'Space Grotesk', sans-serif;
+  margin-bottom: 8px;
+}
+.step-progress {
+  height: 2px;
+  background: var(--border-dim);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.step-fill {
+  height: 100%;
+  background: var(--white);
+  border-radius: 2px;
+  transition: width 0.4s ease;
+}
+
+/* ── HERO TITLE ── */
+.hero-title {
+  font-size: 40px;
+  font-weight: 900;
+  color: var(--white);
+  line-height: 1.05;
+  letter-spacing: -1px;
+  text-transform: uppercase;
+  font-family: 'Space Grotesk', sans-serif;
+  margin: 20px 24px 0;
+}
+.hero-title em { color: var(--green); font-style: normal; }
+
+.hero-rule {
+  height: 1px;
+  background: var(--white);
+  margin: 16px 24px 0;
+  opacity: 0.15;
+}
+
+/* ── TAB BAR ── */
+.tab-bar {
+  display: flex;
+  background: var(--black);
+  border: 1px solid var(--border-dim);
+  border-radius: var(--radius-md);
+  padding: 3px;
+  margin: 20px 0 16px;
+  gap: 3px;
+}
+.tab-btn {
+  flex: 1;
+  padding: 9px 6px;
+  border: none;
+  background: none;
+  color: var(--mid);
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: 'Space Grotesk', sans-serif;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+.tab-btn.active {
+  background: var(--white);
+  color: var(--black);
+}
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* ── URL INPUT ── */
+.url-row {
+  background: var(--dim);
+  border: 1px solid var(--border-dim);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: border-color 0.2s;
+}
+.url-row:focus-within { border-color: var(--light); }
+.url-row input {
+  flex: 1; background: none; border: none; outline: none;
+  color: var(--white); font-size: 14px; font-family: 'Noto Sans KR', sans-serif;
+}
+.url-row input::placeholder { color: var(--mid); }
+
+/* ── INSTAGRAM HINT ── */
+.ig-hint-box {
+  margin-top: 10px;
+  padding: 11px 14px;
+  background: #0d0d0d;
+  border: 1px solid rgba(186,239,98,0.2);
+  border-radius: var(--radius-md);
+  font-size: 12px;
+  color: var(--light);
+  line-height: 1.6;
+}
+.ig-hint-box strong { color: var(--green); }
+
+/* ── PDF DROP ZONE ── */
+.drop-zone {
+  border: 1px dashed var(--border-dim);
+  border-radius: var(--radius-md);
+  padding: 40px 20px;
+  text-align: center;
+  cursor: pointer;
+  background: var(--dim);
+  transition: all 0.2s;
+}
+.drop-zone.drag { border-color: var(--green); background: rgba(186,239,98,0.04); }
+.drop-icon {
+  width: 52px; height: 52px;
+  border-radius: var(--radius-sm);
+  background: var(--border-dim);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 14px; font-size: 22px;
+}
+.drop-text { font-size: 13px; color: var(--mid); line-height: 1.7; }
+.drop-filename { margin-top: 10px; font-size: 12px; color: var(--green); font-weight: 700; }
+
+/* ── TEXTAREA ── */
+.ob-textarea {
+  width: 100%;
+  background: var(--dim);
+  border: 1px solid var(--border-dim);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  color: var(--white);
+  font-size: 13px;
+  font-family: 'Noto Sans KR', sans-serif;
+  outline: none;
+  resize: none;
+  line-height: 1.7;
+  min-height: 150px;
+  transition: border-color 0.2s;
+}
+.ob-textarea:focus { border-color: var(--light); }
+.ob-textarea::placeholder { color: var(--mid); }
+
+/* ── ERROR ── */
+.err {
+  background: rgba(254,56,67,0.08);
+  border: 1px solid rgba(254,56,67,0.2);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  color: var(--error);
+  font-size: 13px;
+  margin-top: 14px;
+  display: none;
+  line-height: 1.5;
+}
+.err.show { display: block; }
+
+/* ── BUTTONS ── */
+/* Primary: green accent (Contacto CTA) */
+.btn-primary {
+  width: 100%;
+  padding: 17px;
+  background: var(--green);
+  color: var(--black);
+  border: none;
+  border-radius: var(--radius-pill);
+  font-size: 14px;
+  font-weight: 900;
+  font-family: 'Space Grotesk', sans-serif;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.btn-primary:disabled { opacity: 0.3; cursor: not-allowed; }
+.btn-primary:not(:disabled):active { opacity: 0.75; }
+
+/* Secondary: white outlined */
+.btn-secondary {
+  width: 100%;
+  padding: 16px;
+  background: transparent;
+  color: var(--white);
+  border: 1.5px solid rgba(255,255,255,0.25);
+  border-radius: var(--radius-pill);
+  font-size: 14px;
+  font-weight: 700;
+  font-family: 'Space Grotesk', sans-serif;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.btn-secondary:active { opacity: 0.7; }
+
+.btn-stack { display: flex; flex-direction: column; gap: 10px; margin-top: auto; }
+
+/* ── SCREEN 2 · 분석 중 ── */
+.analyzing-wrap {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center; gap: 20px; padding: 40px 24px; min-height: 600px;
+}
+.spinner {
+  width: 48px; height: 48px;
+  border: 2px solid var(--border-dim);
+  border-top-color: var(--green);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.analyzing-label {
+  font-size: 20px; font-weight: 900; color: var(--white);
+  text-transform: uppercase; letter-spacing: -0.5px;
+  font-family: 'Space Grotesk', sans-serif;
+}
+.analyzing-sub { font-size: 13px; color: var(--mid); line-height: 1.7; }
+.dots span {
+  display: inline-block; width: 5px; height: 5px; border-radius: 50%;
+  background: var(--border-dim); margin: 0 3px;
+  animation: dp 1.4s ease-in-out infinite;
+}
+.dots span:nth-child(2) { animation-delay: .2s; }
+.dots span:nth-child(3) { animation-delay: .4s; }
+@keyframes dp {
+  0%,80%,100% { transform: scale(0.6); background: var(--border-dim); }
+  40% { transform: scale(1.1); background: var(--green); }
+}
+
+/* ── SCREEN 3 · CT 프로필 카드 ── */
+.ct-topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 20px 8px;
+  position: sticky; top: 0; background: var(--black); z-index: 10;
+  border-bottom: 1px solid var(--separator);
+}
+.ct-nav-btn {
+  font-size: 22px; font-weight: 900; color: var(--white);
+  background: none; border: none; cursor: pointer;
+  opacity: 0.25; font-family: serif; letter-spacing: -1px;
+}
+.ct-logo-type {
+  font-size: 12px; font-weight: 700; letter-spacing: 4px; color: var(--white);
+  font-family: 'Space Grotesk', sans-serif; text-transform: uppercase;
+}
+
+/* 이미지 콜라주 */
+.ct-collage {
+  width: 100%; aspect-ratio: 1;
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 2px;
+  background: var(--separator);
+}
+.ct-img { width: 100%; height: 100%; object-fit: cover; background: #111; display: block; }
+.ct-img:first-child { grid-row: 1 / 3; }
+
+.ct-placeholder {
+  width: 100%; height: 100%;
+  background: #111;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; color: var(--mid); text-align: center;
+  padding: 8px; line-height: 1.4;
+}
+.ct-placeholder-main {
+  grid-row: 1 / 3;
+  background: #0d0d0d;
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: 8px; padding: 20px;
+}
+.ct-placeholder-main .ct-pl-icon { font-size: 32px; opacity: 0.3; }
+.ct-placeholder-main .ct-pl-name {
+  font-size: 20px; font-weight: 900; color: var(--white);
+  text-align: center; letter-spacing: -0.5px; text-transform: uppercase;
+  font-family: 'Space Grotesk', sans-serif;
+}
+.ct-placeholder-main .ct-pl-medium { font-size: 12px; color: var(--mid); text-align: center; }
+
+/* 포스트 스캔 배지 */
+.posts-scan-badge {
+  padding: 7px 20px;
+  background: #0a0a0a;
+  border-bottom: 1px solid var(--separator);
+  display: none; align-items: center; gap: 8px;
+}
+.posts-scan-badge.show { display: flex; }
+.posts-scan-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); flex-shrink: 0; }
+.posts-scan-text { font-size: 11px; color: var(--mid); }
+
+/* 아티스트 정보 */
+.ct-info-area { padding: 16px 20px 0; }
+
+/* 필터 배지 — 5색 */
+.ct-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+.ct-tag {
+  border-radius: var(--radius-pill);
+  padding: 4px 12px;
+  font-size: 10px; font-weight: 700; letter-spacing: 0.5px;
+  border: 1px solid;
+  font-family: 'Space Grotesk', sans-serif;
+  text-transform: uppercase;
+}
+.ct-tag.f-red    { background: rgba(254,56,67,.12);    border-color: rgba(254,56,67,.35);    color: #FE3843; }
+.ct-tag.f-pink   { background: rgba(239,98,199,.12);   border-color: rgba(239,98,199,.35);   color: #EF62C7; }
+.ct-tag.f-blue   { background: rgba(46,167,224,.12);   border-color: rgba(46,167,224,.35);   color: #2EA7E0; }
+.ct-tag.f-green  { background: rgba(186,239,98,.10);   border-color: rgba(186,239,98,.3);    color: #BAEF62; }
+.ct-tag.f-yellow { background: rgba(255,219,28,.10);   border-color: rgba(255,219,28,.3);    color: #FFDB1C; }
+
+.ct-artist-name {
+  font-size: 30px; font-weight: 900; color: var(--white);
+  letter-spacing: -1px; margin-bottom: 4px; line-height: 1.05;
+  font-family: 'Space Grotesk', sans-serif; text-transform: uppercase;
+}
+.ct-artist-medium { font-size: 13px; color: var(--mid); margin-bottom: 12px; }
+.ct-bio { font-size: 13px; color: rgba(255,255,255,0.45); line-height: 1.7; margin-bottom: 16px; }
+
+.ct-series-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 20px; }
+.ct-series-item {
+  display: flex; align-items: center; gap: 10px;
+  background: #0d0d0d; border: 1px solid var(--separator);
+  border-radius: var(--radius-sm); padding: 10px 14px;
+}
+.ct-series-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green); flex-shrink: 0; }
+.ct-series-name { font-size: 12px; color: rgba(255,255,255,0.5); }
+
+/* 편집 */
+.edit-toggle { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; }
+.edit-toggle-btn {
+  font-size: 11px; color: var(--mid); background: none;
+  border: 1px solid var(--border-dim); cursor: pointer;
+  font-family: 'Noto Sans KR', sans-serif;
+  display: flex; align-items: center; gap: 5px;
+  padding: 7px 12px; border-radius: var(--radius-sm);
+}
+.edit-toggle-btn:active { opacity: 0.6; }
+
+.edit-fields { display: none; margin-bottom: 16px; }
+.edit-fields.show { display: block; }
+.field-row { margin-bottom: 12px; }
+.field-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
+  color: var(--mid); margin-bottom: 5px;
+  font-family: 'Space Grotesk', sans-serif; text-transform: uppercase;
+}
+.field-input {
+  width: 100%; background: #0d0d0d; border: 1px solid var(--separator);
+  border-radius: var(--radius-sm); padding: 11px 13px; color: var(--white);
+  font-size: 13px; font-family: 'Noto Sans KR', sans-serif; outline: none;
+  transition: border-color 0.2s;
+}
+.field-input:focus { border-color: var(--light); }
+.field-input::placeholder { color: var(--mid); }
+textarea.field-input { resize: none; line-height: 1.6; min-height: 68px; }
+
+/* 액션 버튼 */
+.ct-actions {
+  display: flex; align-items: center; justify-content: center;
+  gap: 20px; padding: 16px 0 8px;
+}
+.act-btn {
+  width: 52px; height: 52px; border-radius: 50%; border: none;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; cursor: pointer; transition: transform 0.15s;
+}
+.act-btn:active { transform: scale(0.9); }
+.act-skip { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.4); border: 1px solid var(--border-dim); }
+.act-main { width: 64px; height: 64px; background: var(--green); color: var(--black); font-size: 22px; font-weight: 900; }
+.act-chat { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.4); border: 1px solid var(--border-dim); }
+
+.divider { height: 1px; background: var(--separator); margin: 16px 0; }
+
+/* ── SCREEN 3.5 · 사진 선택 ── */
+.screen-pick-layout { flex-direction: column !important; max-height: 100vh; }
+.pick-header {
+  padding: 60px 20px 12px;
+  display: flex; align-items: flex-start; justify-content: space-between;
+  border-bottom: 1px solid var(--separator);
+}
+.pick-title {
+  font-size: 18px; font-weight: 900; color: var(--white);
+  font-family: 'Space Grotesk', sans-serif; text-transform: uppercase; letter-spacing: -0.3px;
+}
+.pick-sub { font-size: 11px; color: var(--mid); margin-top: 4px; letter-spacing: 0.3px; }
+.pick-close-btn { background: none; border: none; color: var(--mid); font-size: 22px; cursor: pointer; line-height: 1; }
+
+.pick-scroll { flex: 1; overflow-y: auto; }
+.pick-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
+.pick-item { position: relative; aspect-ratio: 1; overflow: hidden; cursor: pointer; }
+.pick-item img { width: 100%; height: 100%; object-fit: cover; transition: opacity 0.15s; }
+.pick-item.selected img { opacity: 0.4; }
+.pick-item .pick-check {
+  position: absolute; top: 7px; right: 7px;
+  width: 24px; height: 24px; border-radius: 50%;
+  background: var(--green); display: none;
+  align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 900; color: var(--black);
+}
+.pick-item.selected .pick-check { display: flex; }
+.pick-footer {
+  flex-shrink: 0; background: var(--black);
+  border-top: 1px solid var(--separator);
+  padding: 14px 20px; display: flex; gap: 10px; align-items: center;
+}
+.pick-count { font-size: 13px; color: var(--mid); flex: 1; }
+.pick-count strong { color: var(--white); }
+.pick-done-btn {
+  padding: 12px 28px; background: var(--green); color: var(--black);
+  border: none; border-radius: var(--radius-pill);
+  font-size: 13px; font-weight: 900; cursor: pointer;
+  font-family: 'Space Grotesk', sans-serif; text-transform: uppercase; letter-spacing: 0.5px;
+}
+.pick-done-btn:disabled { opacity: 0.3; cursor: default; }
+
+/* ── SCREEN 4 · 완료 ── */
+.done-wrap {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center; gap: 16px; padding: 40px 24px; min-height: 600px;
+}
+.done-mark {
+  width: 72px; height: 72px; border-radius: 50%;
+  background: var(--green);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px; margin-bottom: 8px; color: var(--black); font-weight: 900;
+}
+.done-title {
+  font-size: 26px; font-weight: 900; color: var(--white);
+  letter-spacing: -0.8px; text-transform: uppercase;
+  font-family: 'Space Grotesk', sans-serif;
+}
+.done-sub { font-size: 13px; color: var(--mid); line-height: 1.7; }
+.done-profile-badge {
+  background: #0d0d0d; border: 1px solid var(--border-dim);
+  border-radius: var(--radius-md); padding: 14px 18px; width: 100%; text-align: left;
+  display: flex; align-items: center; gap: 12px;
+}
+.done-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); flex-shrink: 0; }
+.done-name { font-size: 15px; font-weight: 700; color: var(--white); font-family: 'Space Grotesk', sans-serif; }
+.done-medium { font-size: 12px; color: var(--mid); margin-top: 2px; }
+</style>
+</head>
+<body>
+<div class="phone">
+
+  <!-- ── STATUS BAR ── -->
+  <div class="sbar">
+    <span class="sbar-time" id="clock">9:41</span>
+    <div class="sbar-icons">
+      <svg width="17" height="12" viewBox="0 0 17 12" fill="none">
+        <rect x="0" y="5" width="3" height="7" rx="1" fill="white" opacity="0.3"/>
+        <rect x="4.5" y="3" width="3" height="9" rx="1" fill="white" opacity="0.5"/>
+        <rect x="9" y="1" width="3" height="11" rx="1" fill="white" opacity="0.7"/>
+        <rect x="13.5" y="0" width="3" height="12" rx="1" fill="white"/>
+      </svg>
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="white">
+        <path d="M8 9a1.5 1.5 0 110 3 1.5 1.5 0 010-3z"/>
+        <path d="M8 5.5c1.7 0 3.2.7 4.3 1.8L13.7 6C12.2 4.5 10.2 3.5 8 3.5S3.8 4.5 2.3 6l1.4 1.3C4.8 6.2 6.3 5.5 8 5.5z" opacity="0.6"/>
+        <path d="M8 2C4.8 2 2 3.3.4 5.4l1.4 1.4C3.3 5 5.5 4 8 4s4.7 1 6.2 2.8L15.6 5.4C14 3.3 11.2 2 8 2z" opacity="0.3"/>
+      </svg>
+      <svg width="25" height="12" viewBox="0 0 25 12" fill="none">
+        <rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="white" stroke-opacity="0.3"/>
+        <rect x="2" y="2" width="17" height="8" rx="2" fill="white"/>
+        <path d="M23 4v4c1-.4 1.5-1 1.5-2s-.5-1.6-1.5-2z" fill="white" fill-opacity="0.4"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- ════════════ SCREEN 1 · 입력 ════════════ -->
+  <div class="screen active" id="screen-onboard">
+
+    <div class="step-bar">
+      <div class="step-label">PORTFOLIO SETUP</div>
+      <div class="step-progress"><div class="step-fill" style="width:50%"></div></div>
+    </div>
+
+    <h1 class="hero-title">ADD YOUR<br><em>PORTFOLIO</em></h1>
+    <div class="hero-rule"></div>
+
+    <div class="screen-body">
+      <div class="tab-bar">
+        <button class="tab-btn active" data-tab="url">URL</button>
+        <button class="tab-btn" data-tab="pdf">PDF</button>
+        <button class="tab-btn" data-tab="text">TEXT</button>
+      </div>
+
+      <div class="tab-panel active" id="tab-url">
+        <div class="url-row">
+          <span style="font-size:14px;opacity:.3">🔗</span>
+          <input type="url" id="url-input" placeholder="yourportfolio.com 또는 instagram.com/…" autocomplete="off"/>
+        </div>
+        <div id="ig-hint" style="display:none">
+          <div class="ig-hint-box">
+            📷 <strong>Instagram detected</strong> — 프로필과 게시물을 자동 분석합니다.<br>
+            공개 계정만 지원됩니다.
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="tab-pdf">
+        <div class="drop-zone" id="drop-zone">
+          <div class="drop-icon">📄</div>
+          <p class="drop-text">PDF를 드래그하거나<br>탭해서 선택</p>
+          <div class="drop-filename" id="drop-filename"></div>
+          <input type="file" id="pdf-input" accept=".pdf" hidden/>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="tab-text">
+        <textarea id="text-input" class="ob-textarea"
+          placeholder="인스타그램 바이오, 작가 소개, 포트폴리오 설명 등을 자유롭게 붙여넣어주세요.
+
+예) 세라믹 아티스트 김준석
+LUCA 시리즈 — 광택 유약과 골드리프를 결합한 팝아트 오브제"></textarea>
+      </div>
+
+      <div class="err" id="onboard-err"></div>
+      <div style="flex:1;min-height:24px"></div>
+      <div class="btn-stack">
+        <button class="btn-primary" id="analyze-btn">NEXT!</button>
+        <button class="btn-secondary" onclick="goTo('screen-done')" style="display:none" id="skip-btn">Do it later</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════ SCREEN 2 · 분석 중 ════════════ -->
+  <div class="screen" id="screen-analyzing">
+    <div class="analyzing-wrap">
+      <div class="spinner"></div>
+      <div>
+        <div class="analyzing-label">Analyzing</div>
+        <div class="analyzing-sub" id="analyzing-sub">AI가 포트폴리오를 읽고<br>Contacto 카드를 만들고 있어요</div>
+      </div>
+      <div class="dots"><span></span><span></span><span></span></div>
+    </div>
+  </div>
+
+  <!-- ════════════ SCREEN 3 · CT 프로필 카드 ════════════ -->
+  <div class="screen" id="screen-profile" style="overflow-y:auto; max-height:100vh;">
+
+    <div class="ct-topbar">
+      <button class="ct-nav-btn" onclick="goTo('screen-onboard')">C</button>
+      <span class="ct-logo-type">C · T</span>
+      <button class="ct-nav-btn" style="opacity:1">T</button>
+    </div>
+
+    <div class="ct-collage" id="ct-collage"></div>
+
+    <div class="posts-scan-badge" id="posts-scanned-info">
+      <div class="posts-scan-dot"></div>
+      <span class="posts-scan-text" id="posts-scanned-text"></span>
+    </div>
+
+    <div class="ct-info-area">
+      <div class="ct-tags" id="ct-tags"></div>
+      <div class="ct-artist-name" id="ct-name">—</div>
+      <div class="ct-artist-medium" id="ct-medium">—</div>
+      <div class="ct-bio" id="ct-bio"></div>
+      <div class="ct-series-list" id="ct-series"></div>
+
+      <div class="edit-toggle">
+        <button class="edit-toggle-btn" id="edit-toggle-btn" onclick="toggleEdit()">✏️ 수정하기</button>
+        <button class="edit-toggle-btn" id="pick-photos-btn" onclick="openPickScreen()" style="display:none">🖼 사진 변경</button>
+      </div>
+
+      <div class="edit-fields" id="edit-fields">
+        <div class="divider"></div>
+        <div class="field-row">
+          <div class="field-label">이름</div>
+          <input class="field-input" id="e-name" placeholder="이름"/>
+        </div>
+        <div class="field-row">
+          <div class="field-label">매체 / 분야</div>
+          <input class="field-input" id="e-medium" placeholder="세라믹, 회화, 일러스트…"/>
+        </div>
+        <div class="field-row">
+          <div class="field-label">바이오</div>
+          <textarea class="field-input" id="e-bio" placeholder="짧은 소개…"></textarea>
+        </div>
+        <div class="field-row">
+          <div class="field-label">대표 작업</div>
+          <input class="field-input" id="e-series" placeholder="LUCA 시리즈, …"/>
+        </div>
+        <div class="field-row">
+          <div class="field-label">키워드</div>
+          <input class="field-input" id="e-keywords" placeholder="ceramic, pop art, …"/>
+        </div>
+        <button class="btn-primary" onclick="applyEdit()" style="margin-top:4px">APPLY</button>
+        <div style="height:12px"></div>
+        <div class="divider"></div>
+      </div>
+
+      <div class="ct-actions">
+        <button class="act-btn act-skip" onclick="goTo('screen-onboard')">✕</button>
+        <button class="act-btn act-main" id="register-btn" onclick="registerProfile()">✓</button>
+        <button class="act-btn act-chat" onclick="goTo('screen-onboard')">↩</button>
+      </div>
+      <div style="height:8px"></div>
+    </div>
+  </div>
+
+  <!-- ════════════ SCREEN 3.5 · 사진 선택 ════════════ -->
+  <div class="screen screen-pick-layout" id="screen-pick">
+    <div class="pick-header">
+      <div>
+        <div class="pick-title">Pick Photos</div>
+        <div class="pick-sub" id="pick-sub">최대 6장 선택</div>
+      </div>
+      <button class="pick-close-btn" onclick="goTo('screen-profile')">✕</button>
+    </div>
+    <div class="pick-scroll">
+      <div class="pick-grid" id="pick-grid"></div>
+    </div>
+    <div class="pick-footer">
+      <div class="pick-count"><strong id="pick-sel-count">0</strong> / 6 선택</div>
+      <button class="pick-done-btn" id="pick-done-btn" onclick="applyPickedImages()" disabled>DONE</button>
+    </div>
+  </div>
+
+  <!-- ════════════ SCREEN 4 · 등록 완료 ════════════ -->
+  <div class="screen" id="screen-done">
+    <div class="done-wrap">
+      <div class="done-mark">✓</div>
+      <div class="done-title">Profile Ready</div>
+      <div class="done-sub">Contacto에 프로필이 등록되었습니다<br>매칭을 기다려보세요</div>
+      <div class="done-profile-badge">
+        <div class="done-dot"></div>
+        <div>
+          <div class="done-name" id="done-name">—</div>
+          <div class="done-medium" id="done-medium">—</div>
+        </div>
+      </div>
+      <div style="height:8px"></div>
+      <button class="btn-secondary" onclick="goTo('screen-onboard')">BACK TO START</button>
+    </div>
+  </div>
+
+</div><!-- /phone -->
+
+<script>
+let profile = null, images = [], allImages = [], postsScanned = 0;
+let pickedImages = new Set(), editOpen = false, currentTab = 'url', selectedPdf = null;
+
+function tick() {
+  const d = new Date();
+  document.getElementById('clock').textContent = d.getHours() + ':' + String(d.getMinutes()).padStart(2,'0');
+}
+tick(); setInterval(tick, 30000);
+
+function goTo(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    currentTab = btn.dataset.tab;
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + currentTab).classList.add('active');
+  });
+});
+
+const dropZone = document.getElementById('drop-zone');
+const pdfInput = document.getElementById('pdf-input');
+dropZone.addEventListener('click', () => pdfInput.click());
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault(); dropZone.classList.remove('drag');
+  const f = e.dataTransfer.files[0];
+  if (f?.type === 'application/pdf') setFile(f);
+});
+pdfInput.addEventListener('change', () => { if (pdfInput.files[0]) setFile(pdfInput.files[0]); });
+function setFile(f) { selectedPdf = f; document.getElementById('drop-filename').textContent = f.name; }
+
+function showErr(msg) { const el = document.getElementById('onboard-err'); el.textContent = msg; el.classList.add('show'); }
+function clearErr() { document.getElementById('onboard-err').classList.remove('show'); }
+
+document.getElementById('url-input').addEventListener('input', e => {
+  document.getElementById('ig-hint').style.display = /instagram\.com/.test(e.target.value) ? 'block' : 'none';
+});
+
+function switchToText() {
+  currentTab = 'text';
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelector('[data-tab="text"]').classList.add('active');
+  document.getElementById('tab-text').classList.add('active');
+}
+
+document.getElementById('analyze-btn').addEventListener('click', async () => {
+  clearErr();
+  if (currentTab === 'url') {
+    const url = document.getElementById('url-input').value.trim();
+    if (!url) { showErr('URL을 입력해주세요'); return; }
+    if (!url.startsWith('http')) { showErr('https://로 시작하는 URL을 입력하세요'); return; }
+    await analyzeUrl(url);
+  } else if (currentTab === 'pdf') {
+    if (!selectedPdf) { showErr('PDF 파일을 선택해주세요'); return; }
+    await analyzePdf(selectedPdf);
+  } else {
+    const text = document.getElementById('text-input').value.trim();
+    if (!text) { showErr('소개 텍스트를 입력해주세요'); return; }
+    await analyzeText(text);
+  }
+});
+
+async function analyzeUrl(url) {
+  document.getElementById('analyzing-sub').innerHTML = '웹페이지를 읽고 있어요<br>잠시만 기다려주세요';
+  goTo('screen-analyzing');
+  try {
+    const res = await fetch('/api/onboard/url', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url }),
+    });
+    const data = await res.json();
+    if (res.status === 422 && data.error === 'instagram_blocked') {
+      goTo('screen-onboard'); showErr(data.message); switchToText();
+      if (data.username) document.getElementById('text-input').placeholder = `${data.username} 인스타그램 바이오를 붙여넣어주세요.`;
+      return;
+    }
+    if (!res.ok) throw new Error(data.error || '분석 실패');
+    profile = data.profile; images = data.images || []; allImages = data.allImages || images; postsScanned = data.postsScanned || 0;
+    if (allImages.length > 0) { openPickScreen(); } else { renderCard('url'); goTo('screen-profile'); }
+  } catch (e) { goTo('screen-onboard'); showErr(e.message); }
+}
+
+async function analyzeText(text) {
+  document.getElementById('analyzing-sub').innerHTML = '텍스트를 분석하고 있어요<br>잠시만 기다려주세요';
+  goTo('screen-analyzing');
+  try {
+    const res = await fetch('/api/onboard/text', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text }) });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || '분석 실패');
+    profile = data.profile; images = []; renderCard('pdf'); goTo('screen-profile');
+  } catch (e) { goTo('screen-onboard'); showErr(e.message); }
+}
+
+async function analyzePdf(file) {
+  document.getElementById('analyzing-sub').innerHTML = 'PDF를 읽고 있어요<br>잠시만 기다려주세요';
+  goTo('screen-analyzing');
+  try {
+    const fd = new FormData(); fd.append('pdf', file);
+    const res = await fetch('/api/onboard/pdf', { method: 'POST', body: fd });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || '분석 실패');
+    profile = data.profile; images = []; renderCard('pdf'); goTo('screen-profile');
+  } catch (e) { goTo('screen-onboard'); showErr(e.message); }
+}
+
+function openPickScreen() {
+  pickedImages = new Set(images);
+  const grid = document.getElementById('pick-grid');
+  grid.innerHTML = '';
+  document.getElementById('pick-sub').textContent = `${postsScanned}개 포스트 중 반응 높은 순 · 최대 6장`;
+  allImages.forEach(url => {
+    const item = document.createElement('div');
+    item.className = 'pick-item' + (pickedImages.has(url) ? ' selected' : '');
+    item.dataset.url = url;
+    item.innerHTML = `<img src="${url}" loading="lazy" onerror="this.parentElement.style.display='none'"/><div class="pick-check">✓</div>`;
+    item.addEventListener('click', () => togglePick(item, url));
+    grid.appendChild(item);
+  });
+  updatePickCount(); goTo('screen-pick');
+}
+
+function togglePick(item, url) {
+  if (pickedImages.has(url)) { pickedImages.delete(url); item.classList.remove('selected'); }
+  else { if (pickedImages.size >= 6) return; pickedImages.add(url); item.classList.add('selected'); }
+  updatePickCount();
+}
+function updatePickCount() {
+  const n = pickedImages.size;
+  document.getElementById('pick-sel-count').textContent = n;
+  document.getElementById('pick-done-btn').disabled = n === 0;
+}
+function applyPickedImages() { images = [...pickedImages]; renderCard('url'); goTo('screen-profile'); }
+
+function renderCard(source) {
+  if (!profile) return;
+  const scanInfo = document.getElementById('posts-scanned-info');
+  const scanText = document.getElementById('posts-scanned-text');
+  const pickBtn  = document.getElementById('pick-photos-btn');
+  if (source === 'url' && postsScanned > 0) {
+    scanText.textContent = `최근 ${postsScanned}개 포스트 중 반응 높은 사진만 가져왔어요`;
+    scanInfo.classList.add('show');
+    if (pickBtn) pickBtn.style.display = 'flex';
+  } else { scanInfo.classList.remove('show'); if (pickBtn) pickBtn.style.display = 'none'; }
+
+  const col = document.getElementById('ct-collage');
+  col.innerHTML = '';
+  const filtered = images.filter(Boolean);
+  if (source === 'url' && filtered.length > 0) {
+    col.innerHTML = `
+      <img class="ct-img" src="${filtered[0]}" onerror="this.style.display='none'" style="grid-row:1/3"/>
+      <img class="ct-img" src="${filtered[1]||filtered[0]}" onerror="this.style.display='none'"/>
+      <img class="ct-img" src="${filtered[2]||filtered[0]}" onerror="this.style.display='none'"/>
+    `;
+  } else {
+    const descs = profile.imageDescriptions || [];
+    col.innerHTML = `
+      <div class="ct-placeholder ct-placeholder-main">
+        <div class="ct-pl-icon">🎨</div>
+        <div class="ct-pl-name">${profile.name || 'Artist'}</div>
+        <div class="ct-pl-medium">${profile.medium || ''}</div>
+      </div>
+      <div class="ct-placeholder" style="font-size:11px;color:#444;padding:10px;align-items:flex-start">${descs[0] || profile.style || ''}</div>
+      <div class="ct-placeholder" style="font-size:11px;color:#444;padding:10px;align-items:flex-start">${descs[1] || (profile.series && profile.series[0]) || ''}</div>
+    `;
+  }
+
+  const filterClasses = ['f-red','f-pink','f-blue','f-green','f-yellow'];
+  document.getElementById('ct-tags').innerHTML = (profile.keywords||[]).map((k,i) =>
+    `<span class="ct-tag ${filterClasses[i%5]}">${k}</span>`).join('');
+  document.getElementById('ct-name').textContent   = profile.name   || '—';
+  document.getElementById('ct-medium').textContent = profile.medium || '—';
+  document.getElementById('ct-bio').textContent    = profile.bio    || '';
+  document.getElementById('ct-series').innerHTML = (profile.series||[]).map(s =>
+    `<div class="ct-series-item"><div class="ct-series-dot"></div><div class="ct-series-name">${s}</div></div>`).join('');
+  document.getElementById('e-name').value    = profile.name   || '';
+  document.getElementById('e-medium').value  = profile.medium || '';
+  document.getElementById('e-bio').value     = profile.bio    || '';
+  document.getElementById('e-series').value  = (profile.series||[]).join(', ');
+  document.getElementById('e-keywords').value= (profile.keywords||[]).join(', ');
+}
+
+function toggleEdit() {
+  editOpen = !editOpen;
+  document.getElementById('edit-fields').classList.toggle('show', editOpen);
+  document.getElementById('edit-toggle-btn').textContent = editOpen ? '✕ 닫기' : '✏️ 수정하기';
+}
+function applyEdit() {
+  profile.name     = document.getElementById('e-name').value.trim();
+  profile.medium   = document.getElementById('e-medium').value.trim();
+  profile.bio      = document.getElementById('e-bio').value.trim();
+  profile.series   = document.getElementById('e-series').value.split(',').map(s=>s.trim()).filter(Boolean);
+  profile.keywords = document.getElementById('e-keywords').value.split(',').map(s=>s.trim()).filter(Boolean);
+  renderCard(images.length > 0 ? 'url' : 'pdf'); toggleEdit();
+}
+function registerProfile() {
+  if (!profile) return;
+  localStorage.setItem('contacto_profile', JSON.stringify(profile));
+  document.getElementById('done-name').textContent   = profile.name   || 'Artist';
+  document.getElementById('done-medium').textContent = profile.medium || '—';
+  goTo('screen-done');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+node_modules/
+client/node_modules/
+.env
+*.env.local
+dist/
+client/dist/
+.DS_Store
+.omc/
+client/.omc/
+uploads/

@@ -1,0 +1,50 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary:       #2EA7E0;
+  --secondary:     #F5DFDB;
+  --accent:        #BAEF62;
+  --error:         #FE3843;
+  --warning:       #FFDB1C;
+  --success:       #17DB4E;
+  --black:         #000000;
+  --white:         #FFFFFF;
+  --gray:          #C8C8C8;
+  --bgSurface:     #F5F5F5;
+  --textSec:       #6E6E6E;
+  --bg2:           #111111;
+  --bg3:           #1A1A1A;
+  --border:        #222222;
+  --dim:           #444444;
+  --mid:           #6E6E6E;
+  --filter-red:    #FE3843;
+  --filter-pink:   #EF62C7;
+  --filter-blue:   #1A76FF;
+  --filter-green:  #98FE68;
+  --filter-yellow: #FFDB1C;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+body {
+  background: #F0F0F0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  font-family: 'Noto Sans KR', sans-serif;
+  padding-bottom: 48px;
+}
+
+@keyframes spin { to { transform: rotate(360deg) } }
+@keyframes blink { 0%, 100% { opacity: 1 } 50% { opacity: 0 } }
+@keyframes dp {
+  0%, 80%, 100% { transform: scale(0.6); background: #2EA7E0; opacity: 0.3; }
+  40%           { transform: scale(1.1); background: #2EA7E0; opacity: 1; }
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
